@@ -1,6 +1,6 @@
 import React from 'react';
 
-function log(Component) {
+function log(WrappedComponent) {
 	return class extends React.Component {
 		componentDidMount() {
 			console.log('Current props: ', this.props);
@@ -8,7 +8,7 @@ function log(Component) {
 
 		render() {
       // 将 input 组件包装在容器中，而不对其进行修改。Good!
-      return <Component {...this.props} />;
+      return <WrappedComponent {...this.props} />;
     }
 	}
 }

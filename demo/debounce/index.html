@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Debounce</title>
+</head>
+<body>
+	<input id="in1" />
+	<input id="in2" />
+	<input id="in3" />
+	<input id="in4" />
+
+	<script src="https://cdn.bootcss.com/lodash.js/4.17.12-pre/lodash.min.js"></script>
+	<script>
+		function say() {
+			console.log('say: ', this);
+		}
+
+		/**
+		 * 防抖函数
+		 * @param {function} func 需要执行的函数
+		 * @param {number} wait 等待执行的时间
+		 * @param {boolean} immediate 是否立即执行
+		 */
+		function debounce(func, wait = 2000, immediate = false) {
+			console.log('debounce: ', this);
+			let timer, context, args
+
+			const later = () => setTimeout(() => {
+				timer = null
+				if (!immediate) {
+					func.apply(context, args)
+				}
+			}, wait)
+
+			return function(...params) {
+				context = this
+				args = params
+
+				console.log(timer);
+				
+				if (timer) {
+					clearTimeout(timer)
+					timer = later()
+				} else {
+					timer = later()
+					if (immediate) {
+						func.apply(this, params)
+					}
+				}
+			}
+		}
+
+	function debounce2(func, delay) {
+		let timer = 0
+		return (...args) => {
+			// 如果计时器为空，则立即执行回调函数
+			console.log(timer)
+			if (!timer) func.apply(this, args)
+			else clearTimeout(timer)
+			// 指定时间后清空计时器
+			timer = setTimeout(() => {
+				timer = null
+			}, delay)
+		}
+	}
+
+		const in1 = document.getElementById('in1')
+		in1.addEventListener('input', debounce(say, 3000, true))
+		const in2 = document.getElementById('in2')
+		in2.addEventListener('input', debounce(say, 1000))
+		const in3 = document.getElementById('in3')
+		in3.addEventListener('input', _.debounce(say, 3000, {
+			leading: true,
+			trailing: false
+		}))
+		const in4 = document.getElementById('in4')
+		in4.addEventListener('input', debounce2(say, 3000))
+	</script>
+</body>
+</html>
